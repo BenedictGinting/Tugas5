@@ -1,0 +1,40 @@
+#include <DHT.h>
+#define DHTPIN 18       // Pin data DHT22 terhubung ke pin 4
+#define DHTTYPE DHT22   // Sensor DHT yang digunakan adalah DHT22
+
+DHT dht(DHTPIN, DHTTYPE);
+
+const int ledPin = 33; // Pin untuk lampu LED
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(ledPin, OUTPUT);
+  dht.begin();
+}
+
+void loop() {
+  delay(2000); // Menunggu beberapa detik antara pembacaan
+  
+  float humidity = dht.readHumidity(); // Membaca kelembaban
+  float temperature = dht.readTemperature(); // Membaca suhu dalam Celsius
+  
+  // Memeriksa apakah membaca sensor berhasil
+  if (isnan(humidity) || isnan(temperature)) {
+    Serial.println("Gagal membaca sensor DHT!");
+    return;
+  }
+  
+  Serial.print("Kelembaban: ");
+  Serial.print(humidity);
+  Serial.print(" %\t");
+  Serial.print("Suhu: ");
+  Serial.print(temperature);
+  Serial.println(" °C");
+
+  // Jika suhu di atas 25°C, nyalakan lampu LED
+  if (temperature > 25) {
+    digitalWrite(ledPin, HIGH);
+  } else {
+    digitalWrite(ledPin, LOW);
+  }
+}
